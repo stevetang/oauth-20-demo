@@ -1,0 +1,50 @@
+doctype html
+html
+  head
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
+    script.
+      $(document).ready(function(){
+        $("#btn1").click(function(){
+          $.ajax({
+            url: 'http://localhost:3002/api/oauth/token',
+            headers: {
+              'Authorization': 'Basic dGVzdGJ5c3RldmU6ZEdWemRHSjVjM1JsZG1VPQ==',
+              'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            dataType: 'json',
+            type: 'POST',
+            data: {
+            'grant_type': 'client_credentials'
+          },
+          success: function(data, status, xhr) {
+            window.location.href = data.url;
+          }.bind(this),
+          error: function(xhr, status, err) {
+            alert(err.toString());
+          }.bind(this)
+          });
+        });
+        $("#btn2").click(function(){
+          $.ajax({
+            url: 'http://localhost:3002/api/helloworld',
+            headers: {
+              'Authorization': 'Bearer 7dca11ecc8d7a4bba117817e4c32b062106cb079'
+            },
+            dataType: 'json',
+            type: 'GET',
+            data: {
+          },
+          success: function(data, status, xhr) {
+            window.location.href = data.url;
+          }.bind(this),
+          error: function(xhr, status, err) {
+            alert(err.toString());
+          }.bind(this)
+          });
+        });
+      });
+  body
+    #div1
+      h2 Let jQuery AJAX Change This Text
+    button#btn1 Get External Content
+    button#btn2 Get External Content

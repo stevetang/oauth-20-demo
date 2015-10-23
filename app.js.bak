@@ -1,0 +1,56 @@
+var express = require('express');
+var path = require('path');
+var favicon = require('serve-favicon');
+var logger = require('morgan');
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var oauthserver = require('oauth2-server');
+
+var routes = require('./routes/index');
+var users = require('./routes/users');
+var api = require('./routes/api');
+
+var app = express();
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
+app.oauth = oauthserver({
+  model: require('./routes/model'), // See below for specification
+  grants: ['client_credentials'],
+  debug: true
+});
+
+app.all('/oauth/token', app.oauth.grant());
+// app.get('/api/*', app.oauth.authorise());
+
+app.use('/users', users);
+app.get('/api', app.oauth.authorise());
+app.use('/api/helloworld', helloworld);
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
+
+
+// app.oauth = oauthserver({
+//   model: require('./routes/model'), // See below for specification
+//   grants: ['client_credentials'],
+//   debug: true
+// });
+
+// app.all('/oauth/token', app.oauth.grant());
+
+app.get('/', app.oauth.authorise(), function (req, res) {
+  res.send('Secret area');
+});
+
+app.use(app.oauth.errorHandler());
+
+module.exports = app;
